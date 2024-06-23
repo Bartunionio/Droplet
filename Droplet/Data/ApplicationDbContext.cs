@@ -13,7 +13,7 @@ namespace Droplet.Data
         public DbSet<Donor> Donors { get; set; }
         public DbSet<Hospital> Hospitals { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
-        public DbSet<Recipient> Recipient { get; set; } 
+        public DbSet<Recipient> Recipients { get; set; } 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

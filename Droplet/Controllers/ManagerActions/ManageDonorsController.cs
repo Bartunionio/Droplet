@@ -2,7 +2,10 @@
 using Droplet.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Droplet.Helpers;
 using System.Threading.Tasks;
+using Droplet.Migrations;
+using Microsoft.AspNetCore.Identity;
 
 namespace Droplet.Controllers.MenagersActions
 {
@@ -16,16 +19,16 @@ namespace Droplet.Controllers.MenagersActions
         }
 
         // GET: Donor
-        [Route("/ManagerActions/MenageDonors", Name = "menage_donors")]
+        [Route("/ManagerActions/ManageDonors", Name = "managedonors")]
         public async Task<IActionResult> Index()
         {
             var donors = await _context.Donors.ToListAsync();
-            return View("~/Views/ManagerActions/MenageDonors/Index.cshtml", donors);
+            return View("~/Views/ManagerActions/ManageDonors/Index.cshtml", donors);
         }
         // GET: Donor/Add
         public IActionResult Add()
         {
-            return View("~/Views/ManagerActions/MenageDonors/Add.cshtml");
+            return View("~/Views/ManagerActions/ManageDonors/Add.cshtml");
         }
 
         // POST: Donor/Add
@@ -35,11 +38,28 @@ namespace Droplet.Controllers.MenagersActions
         {
             if (ModelState.IsValid)
             {
-                _context.Add(donor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (PESELHelper.IsValidPESEL(donor.PESEL))
+                {
+                    var existingDonor = await _context.Donors.FirstOrDefaultAsync(d => d.PESEL == donor.PESEL);
+
+                    if (existingDonor == null)
+                    {
+                        _context.Add(donor);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("PESEL", "A donor with this PESEL already exists.");
+                    }
+                    
+                }
+                else
+                {
+                    ModelState.AddModelError("PESEL", "Invalid PESEL.");
+                }
             }
-            return View("~/Views/ManagerActions/MenageDonors/Add.cshtml", donor);
+            return View("~/Views/ManagerActions/ManageDonors/Add.cshtml", donor);
         }
 
 
@@ -57,7 +77,7 @@ namespace Droplet.Controllers.MenagersActions
             {
                 return NotFound();
             }
-            return View("~/Views/ManagerActions/MenageDonors/Edit.cshtml", donor);
+            return View("~/Views/ManagerActions/ManageDonors/Edit.cshtml", donor);
         }
 
         // POST: Donor/Edit/5
@@ -72,25 +92,42 @@ namespace Droplet.Controllers.MenagersActions
 
             if (ModelState.IsValid)
             {
-                try
+                if (PESELHelper.IsValidPESEL(donor.PESEL))
                 {
-                    _context.Update(donor);
-                    await _context.SaveChangesAsync();
+                    var otherDonor = await _context.Donors
+                                               .FirstOrDefaultAsync(d => d.PESEL == donor.PESEL && d.Id != donor.Id);
+
+                    if (otherDonor != null)
+                    {
+                        ModelState.AddModelError("PESEL", "Another donor with this PESEL already exists.");
+                        return View("~/Views/ManagerActions/ManageDonors/Edit.cshtml", donor);
+                    }
+
+                    try
+                    {
+                        _context.Update(donor);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!DonorExists(donor.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!DonorExists(donor.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("PESEL", "Invalid PESEL.");
                 }
-                return RedirectToAction(nameof(Index));
+
             }
-            return View("~/Views/ManagerActions/MenageDonors/Edit.cshtml", donor);
+            return View("~/Views/ManagerActions/ManageDonors/Edit.cshtml", donor);
         }
 
         // GET: Donor/Delete/5
@@ -108,13 +145,13 @@ namespace Droplet.Controllers.MenagersActions
                 return NotFound();
             }
 
-            return View("~/Views/ManagerActions/MenageDonors/Delete.cshtml", donor);
+            return View("~/Views/ManagerActions/ManageDonors/Delete.cshtml", donor);
         }
 
         // POST: Donor/DeleteConfirmed/5
         [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
-        [Route("/ManagerActions/MenageDonors/DeleteConfirmed", Name = "donordeleteconfirmed")]
+        [Route("/ManagerActions/ManageDonors/DeleteConfirmed", Name = "donordeleteconfirmed")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var donor = await _context.Donors.FindAsync(id);

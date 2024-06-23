@@ -1,7 +1,9 @@
 ﻿using Droplet.Data;
+using Droplet.Helpers;
 using Droplet.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +22,7 @@ namespace Droplet.Controllers.ManagersActions
         [Route("/ManagerActions/ManageRecipients", Name = "manage_recipients")]
         public async Task<IActionResult> Index()
         {
-            var recipients = await _context.Recipient.ToListAsync();
+            var recipients = await _context.Recipients.ToListAsync();
             return View("~/Views/ManagerActions/ManageRecipients/Index.cshtml", recipients);
         }
 
@@ -37,9 +39,26 @@ namespace Droplet.Controllers.ManagersActions
         {
             if (ModelState.IsValid)
             {
-                _context.Add(recipient);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (PESELHelper.IsValidPESEL(recipient.PESEL))
+                {
+                    var existingDonor = await _context.Recipients.FirstOrDefaultAsync(r => r.PESEL == recipient.PESEL);
+
+                    if (existingDonor == null)
+                    {
+                        _context.Add(recipient);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("PESEL", "A recipient with this PESEL already exists.");
+                    }
+
+                }
+                else
+                {
+                    ModelState.AddModelError("PESEL", "Invalid PESEL.");
+                }
             }
             return View("~/Views/ManagerActions/ManageRecipients/Add.cshtml", recipient);
         }
@@ -52,7 +71,7 @@ namespace Droplet.Controllers.ManagersActions
                 return NotFound();
             }
 
-            var recipient = await _context.Recipient.FindAsync(id);
+            var recipient = await _context.Recipients.FindAsync(id);
             if (recipient == null)
             {
                 return NotFound();
@@ -72,23 +91,40 @@ namespace Droplet.Controllers.ManagersActions
 
             if (ModelState.IsValid)
             {
-                try
+                if (PESELHelper.IsValidPESEL(recipient.PESEL))
                 {
-                    _context.Update(recipient);
-                    await _context.SaveChangesAsync();
+
+                    var otherRecipient = await _context.Recipients
+                                                    .FirstOrDefaultAsync(r => r.PESEL == recipient.PESEL && r.Id != recipient.Id);
+
+                    if (otherRecipient != null)
+                    {
+                        ModelState.AddModelError("PESEL", "Another recipient with this PESEL already exists.");
+                        return View("~/Views/ManagerActions/ManageRecipients/Edit.cshtml", recipient);
+                    }
+
+                    try
+                    {
+                        _context.Update(recipient);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!RecipientExists(recipient.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!RecipientExists(recipient.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("PESEL", "Invalid PESEL.");
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View("~/Views/ManagerActions/ManageRecipients/Edit.cshtml", recipient);
         }
@@ -101,7 +137,7 @@ namespace Droplet.Controllers.ManagersActions
                 return NotFound();
             }
 
-            var recipient = await _context.Recipient
+            var recipient = await _context.Recipients
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (recipient == null)
             {
@@ -117,20 +153,20 @@ namespace Droplet.Controllers.ManagersActions
         [Route("/ManagerActions/ManageRecipients/DeleteConfirmed", Name = "recipient_delete_confirmed")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recipient = await _context.Recipient.FindAsync(id);
+            var recipient = await _context.Recipients.FindAsync(id);
             if (recipient == null)
             {
                 return NotFound();
             }
 
-            _context.Recipient.Remove(recipient);
+            _context.Recipients.Remove(recipient);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RecipientExists(int id)
         {
-            return _context.Recipient.Any(e => e.Id == id);
+            return _context.Recipients.Any(e => e.Id == id);
         }
     }
 }
