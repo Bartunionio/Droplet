@@ -47,14 +47,14 @@ namespace Droplet.Controllers
         }
 
         // GET: ManageAppUsersController/Details/5
-        public async Task<ActionResult> Details(string id)
+        public async Task<ActionResult> Details(string username)
         {
-            if (id == null)
+            if (username == null)
             {
                 return NotFound();
             }
 
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
             if (user == null)
             {
                 return NotFound();
@@ -80,15 +80,15 @@ namespace Droplet.Controllers
 
         // GET: ManageAppUsersController/Edit/5
         [HttpGet]
-        [Route("/AdminActions/ManageAppUsers/Edit/{id}", Name = "appuseredit")]
-        public async Task<ActionResult> Edit(string id)
+        [Route("/AdminActions/ManageAppUsers/Edit/{username}", Name = "appuseredit")]
+        public async Task<ActionResult> Edit(string username)
         {
-            if (id == null)
+            if (username == null)
             {
                 return NotFound();
             }
 
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
             if (user == null)
             {
                 return NotFound();
@@ -111,25 +111,23 @@ namespace Droplet.Controllers
         // POST: ManageAppUsersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/AdminActions/ManageAppUsers/Edit/{id}", Name = "appusereditpost")]
-        public async Task<ActionResult> Edit(string id, UserViewModel model)
+        [Route("/AdminActions/ManageAppUsers/Edit/{username}", Name = "appusereditpost")]
+        public async Task<ActionResult> Edit(string username, UserViewModel model)
         {
-            if (id != model.Id)
+            if (username != model.Username)
             {
                 return NotFound();
             }
 
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
             if (user == null)
             {
                 return NotFound();
             }
 
-            // Get current roles
             var roles = await _userManager.GetRolesAsync(user);
             var currentRole = roles.FirstOrDefault();
 
-            // Remove current role if exists
             if (!string.IsNullOrEmpty(currentRole))
             {
                 var removeResult = await _userManager.RemoveFromRoleAsync(user, currentRole);
@@ -150,37 +148,39 @@ namespace Droplet.Controllers
                     return View("~/Views/AdminActions/ManageAppUsers/Edit.cshtml", model);
                 }
             }
-
-
-
-                Console.WriteLine("asd");
             return RedirectToAction(nameof(Index));
         }
 
         // GET: ManageAppUsersController/Delete/5
         [Route("/AdminActions/ManageAppUsers/Delete.cshtml", Name = "appuserdelete")]
-        public async Task<ActionResult> Delete(string id)
+        public async Task<ActionResult> Delete(string username)
         {
-            if (id == null)
+            if (username == null)
             {
                 return NotFound();
             }
 
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
             if (user == null)
             {
                 return NotFound();
             }
 
+            // Forbid deleting current user
+            if (user == _userManager.GetUserAsync(User).Result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             var roles = await _userManager.GetRolesAsync(user);
-            var role = roles.FirstOrDefault();
+            var currentRole = roles.FirstOrDefault();
 
             var userViewModel = new UserViewModel
             {
                 Id = user.Id,
                 Username = user.UserName,
                 Email = user.Email,
-                Role = role ?? "No role assigned",
+                Role = currentRole ?? "No role assigned",
             };
 
             return View("~/Views/AdminActions/ManageAppUsers/Delete.cshtml", userViewModel);
@@ -190,13 +190,17 @@ namespace Droplet.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("/AdminActions/ManageAppUsers/DeleteConfirmed", Name = "appuserdeleteconfirmed")]
-        public async Task<ActionResult> DeleteConfirmed(string id)
+        public async Task<ActionResult> DeleteConfirmed(string username)
         {
-            Console.WriteLine("asdas");
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
             if (user == null)
             {
                 return NotFound();
+            }
+            // Forbid deleting current user
+            if (user == _userManager.GetUserAsync(User).Result)
+            {
+                return RedirectToAction(nameof(Index));
             }
 
             var result = await _userManager.DeleteAsync(user);
@@ -206,9 +210,8 @@ namespace Droplet.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                return View("~/Views/AdminActions/ManageAppusers/Delete.cshtml", new UserViewModel { Id = id });
+                return View("~/Views/AdminActions/ManageAppusers/Delete.cshtml", new UserViewModel { Username = username });
             }
-
             return RedirectToAction(nameof(Index));
         }
     }

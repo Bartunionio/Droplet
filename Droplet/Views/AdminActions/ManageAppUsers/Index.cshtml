@@ -6,6 +6,7 @@
 
 @{
     ViewData["Title"] = "Manage Users";
+    var currentUser = UserManager.GetUserAsync(User).Result;
 }
 
 <h1>Application Users</h1>
@@ -38,9 +39,17 @@
                     @item.Role
                 </td>
                 <td>
-                    <a asp-route="appuseredit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary">Details</a>
-                    <a asp-route="appuserdelete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    <a asp-route="appuseredit" asp-route-username="@item.Username" class="btn btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-username="@item.Username" class="btn btn-secondary">Details</a>
+                    @if (currentUser.UserName == item.Username)
+                    {
+                        <a class="btn btn-danger disabled" disabled>Delete</a>
+                    }
+                    else
+                    {
+                    <a asp-route="appuserdelete" asp-route-username="@item.Username" class="btn btn-danger">Delete</a>
+                    }
+                    
                 </td>
             </tr>
         }
