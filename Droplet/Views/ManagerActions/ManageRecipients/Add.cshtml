@@ -1,0 +1,36 @@
+﻿@model Droplet.Models.Entities.Recipient
+
+@{
+    ViewData["Title"] = "Add Recipient";
+}
+
+<h2>Add Recipient</h2>
+
+<form asp-action="Add" method="post">
+    <div class="form-group">
+        <label asp-for="FirstName">First Name</label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName">Last Name</label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PESEL">PESEL</label>
+        <input asp-for="PESEL" class="form-control" />
+        <span asp-validation-for="PESEL" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="BloodType">Blood Type</label>
+        <select asp-for="BloodType" class="form-control">
+            @foreach (var bloodType in Enum.GetValues(typeof(Droplet.Data.Enum.BloodTypeEnum)))
+            {
+                <option value="@bloodType">@bloodType</option>
+            }
+        </select>
+        <span asp-validation-for="BloodType" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

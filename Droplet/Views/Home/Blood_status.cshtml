@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Droplet.ViewModels.BloodStatusViewModel>
+
+<div class="container mt-5">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Donor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Date</td>
+                    <td>@item.DonorName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

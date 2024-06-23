@@ -1,0 +1,78 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["Title"] = "Blood Bank Home Page";
+    var isAdmin = false;
+    var isUser = false;
+    var isManager = false;
+
+    if (SignInManager.IsSignedIn(User))
+    {
+        var user = UserManager.GetUserAsync(User).Result;
+        isAdmin = UserManager.IsInRoleAsync(user, "Admin").Result;
+        isManager = UserManager.IsInRoleAsync(user, "Manager").Result;
+        isUser = !(isAdmin || isManager);
+    }
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+        <div class="text-center">
+        @if (isAdmin)
+        {
+                    <h1 class="display-4">Hi Admin</h1>
+                    <p>Welcome back, Admin! You have full access to manage the blood bank system.</p>
+        }
+        else if (isManager)
+        {
+                    <h1 class="display-4">Hi Manager</h1>
+                    <p>Welcome back, Manager! You can oversee the operations and ensure everything runs smoothly.</p>
+        }
+        else if (isUser)
+        {
+                    <h1 class="display-4">Hi Blood Donor</h1>
+                    <p>Welcome back! Thank you for your contributions to our blood bank.</p>
+        }
+        </div>
+}
+else
+{
+        <div class="text-center">
+            <h1 class="display-4">Welcome to the Blood Bank</h1>
+            <p>We are dedicated to raising and providing a safe and reliable blood supply to save lives in our community. Learn more about our mission and how you can help.</p>
+        </div>
+
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-4">
+                    <h2>About Us</h2>
+                    <p>Our blood bank is committed to ensuring that every patient in need has access to life-saving blood. We organize blood donation drives and maintain a secure blood supply for hospitals and clinics.</p>
+                </div>
+                <div class="col-md-4">
+                    <h2>Our Services</h2>
+                    <p>We offer a range of services to support our mission, including:</p>
+                    <ul>
+                        <li>Blood Donation Drives</li>
+                        <li>24/7 Emergency Blood Supply</li>
+                        <li>Blood Testing and Safe Storage</li>
+                        <li>Volunteer and Training Programs</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h2>Get Involved</h2>
+                    <p>Your involvement can make a difference. Here are some ways you can support our cause:</p>
+                    <ul>
+                        <li>Volunteer your time at our events and donation drives</li>
+                        <li>Organize a blood donation camp in your community or workplace</li>
+                        <li>Spread awareness about the importance of blood donation</li>
+                        <li>Provide financial support to help us maintain our services</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <p>Every drop counts. Join us in our mission to save lives by ensuring a safe and ample blood supply for those in need.</p>
+        </div>
+}
