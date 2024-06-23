@@ -44,7 +44,14 @@ namespace Droplet.Controllers.AdminActions
                 return NotFound();
             }
 
-            return View(doctor);
+            var viewModel = new DoctorViewModel
+            {
+                Doctor = doctor,
+                Hospitals = _context.Hospitals.ToList(),
+                SelectedHospitalIds = doctor.Hospitals.Select(h => h.Id).ToList()
+            };
+
+            return View("~/Views/AdminActions/ManageDoctors/Details.cshtml", viewModel);
         }
 
         // GET: ManageDoctors/Create
@@ -219,7 +226,14 @@ namespace Droplet.Controllers.AdminActions
                 return NotFound();
             }
 
-            return View(doctor);
+            var viewModel = new DoctorViewModel
+            {
+                Doctor = doctor,
+                Hospitals = _context.Hospitals.ToList(),
+                SelectedHospitalIds = doctor.Hospitals.Select(h => h.Id).ToList()
+            };
+
+            return View("~/Views/AdminActions/ManageDoctors/Delete.cshtml", viewModel);
         }
 
         // POST: ManageDoctors/Delete/5
