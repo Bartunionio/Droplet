@@ -1,6 +1,6 @@
 ﻿namespace Droplet.Helpers
 {
-    public class PESELHelper
+    public static class PESELHelper
     {
         public static bool IsValidPESEL(string pesel)
         {

@@ -24,9 +24,6 @@ namespace Droplet.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Users
-
-
             // Donor
             modelBuilder.Entity<Donor>()
                 .HasKey(d => d.Id);

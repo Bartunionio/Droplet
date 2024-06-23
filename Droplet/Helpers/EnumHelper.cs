@@ -34,7 +34,7 @@ namespace Droplet.Helpers
             return new SelectList(values, "Value", "Text");
         }
 
-        private static string GetEnumDescription(Enum enumValue)
+        public static string GetEnumDescription(Enum enumValue)
         {
             var fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
             var descriptionAttributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];

@@ -114,6 +114,8 @@ namespace Droplet.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Address = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Street = table.Column<string>(type: "longtext", nullable: false)
@@ -128,7 +130,7 @@ namespace Droplet.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Recipient",
+                name: "Recipients",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -143,7 +145,7 @@ namespace Droplet.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Recipient", x => x.Id);
+                    table.PrimaryKey("PK_Recipients", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -326,9 +328,9 @@ namespace Droplet.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Transfusions_Recipient_IdRecipient",
+                        name: "FK_Transfusions_Recipients_IdRecipient",
                         column: x => x.IdRecipient,
-                        principalTable: "Recipient",
+                        principalTable: "Recipients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
@@ -473,7 +475,7 @@ namespace Droplet.Migrations
                 name: "Hospitals");
 
             migrationBuilder.DropTable(
-                name: "Recipient");
+                name: "Recipients");
         }
     }
 }

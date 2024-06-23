@@ -32,22 +32,12 @@
 
             <div class="form-group">
                 <label asp-for="BloodType" class="control-label"></label>
-                <select asp-for="BloodType" class="form-control">
-                    <option value="">Select Blood Type</option>
-                    <option value="1">0Rh+</option>
-                    <option value="2">0Rh-</option>
-                    <option value="3">ARh+</option>
-                    <option value="4">ARh-</option>
-                    <option value="5">BRh+</option>
-                    <option value="6">BRh-</option>
-                    <option value="7">ABRh+</option>
-                    <option value="8">ABRh-</option>
-                </select>
+                <select asp-for="BloodType" class="form-control" asp-items="ViewBag.BloodType"></select>
                 <span asp-validation-for="BloodType" class="text-danger"></span>
             </div>
-
+            <br />
             <div class="form-group">
-                <button type="submit" class="btn btn-success">Add Donor</button>
+                <button type="submit" class="btn btn-primary">Add Donor</button>
                 <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>

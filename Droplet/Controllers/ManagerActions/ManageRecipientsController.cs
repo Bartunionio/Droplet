@@ -1,4 +1,5 @@
 ﻿using Droplet.Data;
+using Droplet.Data.Enum;
 using Droplet.Helpers;
 using Droplet.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ namespace Droplet.Controllers.ManagersActions
         // GET: Recipient/Add
         public IActionResult Add()
         {
+            ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
             return View("~/Views/ManagerActions/ManageRecipients/Add.cshtml");
         }
 
@@ -60,6 +62,7 @@ namespace Droplet.Controllers.ManagersActions
                     ModelState.AddModelError("PESEL", "Invalid PESEL.");
                 }
             }
+            ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
             return View("~/Views/ManagerActions/ManageRecipients/Add.cshtml", recipient);
         }
 
@@ -76,6 +79,7 @@ namespace Droplet.Controllers.ManagersActions
             {
                 return NotFound();
             }
+            ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
             return View("~/Views/ManagerActions/ManageRecipients/Edit.cshtml", recipient);
         }
 
@@ -100,6 +104,7 @@ namespace Droplet.Controllers.ManagersActions
                     if (otherRecipient != null)
                     {
                         ModelState.AddModelError("PESEL", "Another recipient with this PESEL already exists.");
+                        ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
                         return View("~/Views/ManagerActions/ManageRecipients/Edit.cshtml", recipient);
                     }
 
@@ -126,6 +131,7 @@ namespace Droplet.Controllers.ManagersActions
                     ModelState.AddModelError("PESEL", "Invalid PESEL.");
                 }
             }
+            ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
             return View("~/Views/ManagerActions/ManageRecipients/Edit.cshtml", recipient);
         }
 
@@ -143,7 +149,6 @@ namespace Droplet.Controllers.ManagersActions
             {
                 return NotFound();
             }
-
             return View("~/Views/ManagerActions/ManageRecipients/Delete.cshtml", recipient);
         }
 

@@ -21,18 +21,18 @@
         <div class="text-center">
         @if (isAdmin)
         {
-                    <h1 class="display-4">Hi Admin</h1>
-                    <p>Welcome back, Admin! You have full access to manage the blood bank system.</p>
+            <h1 class="display-4">Hello @UserManager.GetUserAsync(User).Result!</h1>
+            <p>Welcome back, Admin! You have full access to manage the blood bank system.</p>
         }
         else if (isManager)
         {
-                    <h1 class="display-4">Hi Manager</h1>
-                    <p>Welcome back, Manager! You can oversee the operations and ensure everything runs smoothly.</p>
+            <h1 class="display-4">Hello @UserManager.GetUserAsync(User).Result!</h1>
+            <p>Welcome back! You can manage donors, recipients, register donations and transfusions.</p>
         }
         else if (isUser)
         {
-                    <h1 class="display-4">Hi Blood Donor</h1>
-                    <p>Welcome back! Thank you for your contributions to our blood bank.</p>
+            <h1 class="display-4">Hello @UserManager.GetUserAsync(User).Result!</h1>
+            <p>Welcome back! Thank you for your contributions to our blood bank.</p>
         }
         </div>
 }

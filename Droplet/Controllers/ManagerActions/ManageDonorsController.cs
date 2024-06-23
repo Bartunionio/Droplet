@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Droplet.Helpers;
 using System.Threading.Tasks;
-using Droplet.Migrations;
 using Microsoft.AspNetCore.Identity;
+using Droplet.Data.Enum;
 
 namespace Droplet.Controllers.MenagersActions
 {
@@ -28,6 +28,7 @@ namespace Droplet.Controllers.MenagersActions
         // GET: Donor/Add
         public IActionResult Add()
         {
+            ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
             return View("~/Views/ManagerActions/ManageDonors/Add.cshtml");
         }
 
@@ -59,6 +60,7 @@ namespace Droplet.Controllers.MenagersActions
                     ModelState.AddModelError("PESEL", "Invalid PESEL.");
                 }
             }
+            ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
             return View("~/Views/ManagerActions/ManageDonors/Add.cshtml", donor);
         }
 
@@ -77,6 +79,7 @@ namespace Droplet.Controllers.MenagersActions
             {
                 return NotFound();
             }
+            ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
             return View("~/Views/ManagerActions/ManageDonors/Edit.cshtml", donor);
         }
 
@@ -100,6 +103,7 @@ namespace Droplet.Controllers.MenagersActions
                     if (otherDonor != null)
                     {
                         ModelState.AddModelError("PESEL", "Another donor with this PESEL already exists.");
+                        ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
                         return View("~/Views/ManagerActions/ManageDonors/Edit.cshtml", donor);
                     }
 
@@ -127,6 +131,7 @@ namespace Droplet.Controllers.MenagersActions
                 }
 
             }
+            ViewBag.BloodType = BloodTypeEnum.O_Positive.ToSelectList();
             return View("~/Views/ManagerActions/ManageDonors/Edit.cshtml", donor);
         }
 
@@ -144,7 +149,6 @@ namespace Droplet.Controllers.MenagersActions
             {
                 return NotFound();
             }
-
             return View("~/Views/ManagerActions/ManageDonors/Delete.cshtml", donor);
         }
 

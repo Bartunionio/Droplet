@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Droplet.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240622163341_Init_1.5")]
-    partial class Init_15
+    [Migration("20240623132330_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -131,6 +131,10 @@ namespace Droplet.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -169,7 +173,7 @@ namespace Droplet.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recipient");
+                    b.ToTable("Recipients");
                 });
 
             modelBuilder.Entity("Droplet.Models.Entities.Transfusion", b =>

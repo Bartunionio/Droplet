@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\AdminActions\ManageHospitals\**" />
+    <Content Remove="Views\AdminActions\ManageHospitals\**" />
+    <EmbeddedResource Remove="Views\AdminActions\ManageHospitals\**" />
+    <None Remove="Views\AdminActions\ManageHospitals\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <!--PackageReference Include="Identity.EntityFrameworkCore" Version="1.2.7" /-->
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
@@ -25,7 +32,6 @@
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Views\AdminActions\ManageHospitals\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 

@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Droplet.Data;
 using Droplet.Models.Entities;
+using Droplet.Helpers;
+using System.Drawing;
+using Droplet.Models;
 
 namespace Droplet.Controllers.AdminActions
 {
@@ -20,9 +23,10 @@ namespace Droplet.Controllers.AdminActions
         }
 
         // GET: ManageDoctors
+        [Route("/AdminActions/ManageDoctors", Name = "doctorlist")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Doctors.ToListAsync());
+            return View("~/Views/AdminActions/ManageDoctors/Index.cshtml", await _context.Doctors.ToListAsync());
         }
 
         // GET: ManageDoctors/Details/5
@@ -46,23 +50,55 @@ namespace Droplet.Controllers.AdminActions
         // GET: ManageDoctors/Create
         public IActionResult Create()
         {
-            return View();
+            var viewModel = new DoctorViewModel
+            {
+                Hospitals = _context.Hospitals.ToList()
+            };
+            return View("~/Views/AdminActions/ManageDoctors/Create.cshtml", viewModel);
         }
 
         // POST: ManageDoctors/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,PESEL")] Doctor doctor)
+        public async Task<IActionResult> Create(DoctorViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(doctor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (PESELHelper.IsValidPESEL(viewModel.Doctor.PESEL))
+                {
+                    var existingDoctor = await _context.Doctors.FirstOrDefaultAsync(d => d.PESEL == viewModel.Doctor.PESEL);
+
+                    if (existingDoctor == null)
+                    {
+                        if (viewModel.SelectedHospitalIds != null)
+                        {
+                            foreach (var hospitalId in viewModel.SelectedHospitalIds)
+                            {
+                                var hospital = await _context.Hospitals.FindAsync(hospitalId);
+                                if (hospital != null)
+                                {
+                                    viewModel.Doctor.Hospitals.Add(hospital);
+                                }
+                            }
+                        }
+
+                        _context.Add(viewModel.Doctor);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Doctor.PESEL", "A doctor with this PESEL already exists.");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("Doctor.PESEL", "Invalid PESEL.");
+                }
             }
-            return View(doctor);
+
+            viewModel.Hospitals = _context.Hospitals.ToList();
+            return View("~/Views/AdminActions/ManageDoctors/Create.cshtml", viewModel);
         }
 
         // GET: ManageDoctors/Edit/5
@@ -73,47 +109,99 @@ namespace Droplet.Controllers.AdminActions
                 return NotFound();
             }
 
-            var doctor = await _context.Doctors.FindAsync(id);
+            var doctor = await _context.Doctors
+                .Include(d => d.Hospitals)
+                .FirstOrDefaultAsync(d => d.Id == id);
             if (doctor == null)
             {
                 return NotFound();
             }
-            return View(doctor);
+
+            var viewModel = new DoctorViewModel
+            {
+                Doctor = doctor,
+                Hospitals = _context.Hospitals.ToList(),
+                SelectedHospitalIds = doctor.Hospitals.Select(h => h.Id).ToList()
+            };
+
+            return View("~/Views/AdminActions/ManageDoctors/Edit.cshtml", viewModel);
         }
 
         // POST: ManageDoctors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,PESEL")] Doctor doctor)
+        public async Task<IActionResult> Edit(int id, DoctorViewModel viewModel)
         {
-            if (id != doctor.Id)
+            if (id != viewModel.Doctor.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                if (PESELHelper.IsValidPESEL(viewModel.Doctor.PESEL))
                 {
-                    _context.Update(doctor);
-                    await _context.SaveChangesAsync();
+                    var existingDoctor = await _context.Doctors
+                                                       .FirstOrDefaultAsync(d => d.PESEL == viewModel.Doctor.PESEL && d.Id != viewModel.Doctor.Id);
+
+                    if (existingDoctor != null)
+                    {
+                        ModelState.AddModelError("Doctor.PESEL", "Another doctor with this PESEL already exists.");
+                        viewModel.Hospitals = _context.Hospitals.ToList();
+                        return View("~/Views/AdminActions/ManageDoctors/Edit.cshtml", viewModel);
+                    }
+
+                    try
+                    {
+                        var doctorToUpdate = await _context.Doctors
+                                                           .Include(d => d.Hospitals)
+                                                           .FirstOrDefaultAsync(d => d.Id == id);
+
+                        if (doctorToUpdate != null)
+                        {
+                            doctorToUpdate.FirstName = viewModel.Doctor.FirstName;
+                            doctorToUpdate.LastName = viewModel.Doctor.LastName;
+                            doctorToUpdate.PESEL = viewModel.Doctor.PESEL;
+
+                            // Update hospitals
+                            doctorToUpdate.Hospitals.Clear();
+                            if (viewModel.SelectedHospitalIds != null)
+                            {
+                                foreach (var hospitalId in viewModel.SelectedHospitalIds)
+                                {
+                                    var hospital = await _context.Hospitals.FindAsync(hospitalId);
+                                    if (hospital != null)
+                                    {
+                                        doctorToUpdate.Hospitals.Add(hospital);
+                                    }
+                                }
+                            }
+
+                            _context.Update(doctorToUpdate);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!DoctorExists(viewModel.Doctor.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!DoctorExists(doctor.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("Doctor.PESEL", "Invalid PESEL.");
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(doctor);
+
+            viewModel.Hospitals = _context.Hospitals.ToList();
+            return View("~/Views/AdminActions/ManageDoctors/Edit.cshtml", viewModel);
         }
 
         // GET: ManageDoctors/Delete/5

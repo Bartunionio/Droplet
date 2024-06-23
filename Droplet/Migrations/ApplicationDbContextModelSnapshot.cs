@@ -128,6 +128,10 @@ namespace Droplet.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -166,7 +170,7 @@ namespace Droplet.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recipient");
+                    b.ToTable("Recipients");
                 });
 
             modelBuilder.Entity("Droplet.Models.Entities.Transfusion", b =>

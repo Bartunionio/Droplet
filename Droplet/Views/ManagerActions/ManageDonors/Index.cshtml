@@ -31,7 +31,7 @@
                     <td>@donor.FirstName</td>
                     <td>@donor.LastName</td>
                     <td>@donor.PESEL</td>
-                    <td>@donor.BloodType</td>
+                    <td>@Droplet.Helpers.EnumHelper.GetEnumDescription(donor.BloodType)</td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@donor.Id" class="btn btn-warning">Edit</a>
                         <a asp-action="Delete" asp-route-id="@donor.Id" class="btn btn-danger">Delete</a>
