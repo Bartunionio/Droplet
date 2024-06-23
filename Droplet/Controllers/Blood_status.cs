@@ -2,7 +2,7 @@
 using Droplet.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Droplet.ViewModels;
+using Droplet.Models;
 
 namespace Droplet.Controllers
 {

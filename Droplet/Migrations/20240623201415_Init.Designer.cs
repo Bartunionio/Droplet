@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Droplet.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240623200502_Init")]
+    [Migration("20240623201415_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -54,7 +54,7 @@ namespace Droplet.Migrations
                     b.Property<int>("IdDonor")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdTransfusion")
+                    b.Property<int?>("IdTransfusion")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -483,8 +483,7 @@ namespace Droplet.Migrations
                     b.HasOne("Droplet.Models.Entities.Transfusion", "Transfusion")
                         .WithMany("BloodUsed")
                         .HasForeignKey("IdTransfusion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Donor");
 

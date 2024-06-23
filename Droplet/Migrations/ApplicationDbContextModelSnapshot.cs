@@ -51,7 +51,7 @@ namespace Droplet.Migrations
                     b.Property<int>("IdDonor")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdTransfusion")
+                    b.Property<int?>("IdTransfusion")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -480,8 +480,7 @@ namespace Droplet.Migrations
                     b.HasOne("Droplet.Models.Entities.Transfusion", "Transfusion")
                         .WithMany("BloodUsed")
                         .HasForeignKey("IdTransfusion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Donor");
 

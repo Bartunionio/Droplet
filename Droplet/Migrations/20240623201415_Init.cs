@@ -346,7 +346,7 @@ namespace Droplet.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     IdDonor = table.Column<int>(type: "int", nullable: false),
-                    IdTransfusion = table.Column<int>(type: "int", nullable: false)
+                    IdTransfusion = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Droplet.ViewModels
+namespace Droplet.Models
 {
     public class BloodStatusViewModel
     {
