@@ -3,13 +3,13 @@
 @inject UserManager<IdentityUser> UserManager
 @{
     ViewData["Title"] = "Home";
+    var user = SignInManager.IsSignedIn(User) ? UserManager.GetUserAsync(User).Result : null;
     var isAdmin = false;
     var isUser = false;
     var isManager = false;
 
-    if (SignInManager.IsSignedIn(User))
+    if (user != null)
     {
-        var user = UserManager.GetUserAsync(User).Result;
         isAdmin = UserManager.IsInRoleAsync(user, "Admin").Result;
         isManager = UserManager.IsInRoleAsync(user, "Manager").Result;
         isUser = !(isAdmin || isManager);

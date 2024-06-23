@@ -97,6 +97,59 @@ namespace Droplet.Data
                 .HasForeignKey(b => b.IdTransfusion)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
+
+            // Seeding data
+            modelBuilder.Entity<Hospital>().HasData(
+                new Hospital
+                {
+                    Id = 1,
+                    Name = "Central Clinical Hospital of the Ministry of the Interior and Administration",
+                    Address = "137",
+                    Street = "Wołoska",
+                    PostalCode = "02-507"
+                },
+                new Hospital
+                {
+                    Id = 2,
+                    Name = "John Paul II Hospital",
+                    Address = "80",
+                    Street = "Prądnicka",
+                    PostalCode = "31-202"
+                },
+                new Hospital
+                {
+                    Id = 3,
+                    Name = "University Clinical Center",
+                    Address = "7",
+                    Street = "Dębinki",
+                    PostalCode = "80-211"
+                },
+                new Hospital
+                {
+                    Id = 4,
+                    Name = "Children's Memorial Health Institute",
+                    Address = "20",
+                    Street = "Aleja Dzieci Polskich",
+                    PostalCode = "04-730"
+                },
+                new Hospital
+                {
+                    Id = 5,
+                    Name = "Wielkopolska Center of Pulmonology and Thoracic Surgery",
+                    Address = "62",
+                    Street = "Szamarzewskiego",
+                    PostalCode = "60-569"
+                },
+                new Hospital
+                {
+                    Id = 6,
+                    Name = "Independent Public Central Clinical Hospital",
+                    Address = "1a",
+                    Street = "Banacha",
+                    PostalCode = "02-097"
+                }
+            );
         }
     }
 }

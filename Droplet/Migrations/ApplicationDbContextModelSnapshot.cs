@@ -143,6 +143,56 @@ namespace Droplet.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Hospitals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "137",
+                            Name = "Central Clinical Hospital of the Ministry of the Interior and Administration",
+                            PostalCode = "02-507",
+                            Street = "Wołoska"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "80",
+                            Name = "John Paul II Hospital",
+                            PostalCode = "31-202",
+                            Street = "Prądnicka"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "7",
+                            Name = "University Clinical Center",
+                            PostalCode = "80-211",
+                            Street = "Dębinki"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Address = "20",
+                            Name = "Children's Memorial Health Institute",
+                            PostalCode = "04-730",
+                            Street = "Aleja Dzieci Polskich"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "62",
+                            Name = "Wielkopolska Center of Pulmonology and Thoracic Surgery",
+                            PostalCode = "60-569",
+                            Street = "Szamarzewskiego"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Address = "1a",
+                            Name = "Independent Public Central Clinical Hospital",
+                            PostalCode = "02-097",
+                            Street = "Banacha"
+                        });
                 });
 
             modelBuilder.Entity("Droplet.Models.Entities.Recipient", b =>

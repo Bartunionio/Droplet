@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Droplet.Migrations
 {
     /// <inheritdoc />
@@ -363,6 +365,19 @@ namespace Droplet.Migrations
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Hospitals",
+                columns: new[] { "Id", "Address", "Name", "PostalCode", "Street" },
+                values: new object[,]
+                {
+                    { 1, "137", "Central Clinical Hospital of the Ministry of the Interior and Administration", "02-507", "Wołoska" },
+                    { 2, "80", "John Paul II Hospital", "31-202", "Prądnicka" },
+                    { 3, "7", "University Clinical Center", "80-211", "Dębinki" },
+                    { 4, "20", "Children's Memorial Health Institute", "04-730", "Aleja Dzieci Polskich" },
+                    { 5, "62", "Wielkopolska Center of Pulmonology and Thoracic Surgery", "60-569", "Szamarzewskiego" },
+                    { 6, "1a", "Independent Public Central Clinical Hospital", "02-097", "Banacha" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
