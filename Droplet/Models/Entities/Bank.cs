@@ -17,6 +17,7 @@ namespace Droplet.Models.Entities
         [ForeignKey("Transfusion")]
         public int? IdTransfusion { get; set; } = null;
         public Transfusion Transfusion { get; set; }
-       
+        
+
     }
 }

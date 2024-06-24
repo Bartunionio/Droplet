@@ -13,6 +13,7 @@ namespace Droplet.Models.Entities
 
         public ICollection<Hospital> Hospitals { get; set; } = new List<Hospital>();
         public ICollection<Transfusion> Transfusions { get; set; } = new List<Transfusion>();
+        public string FullName => $"{FirstName} {LastName}";
 
     }
 }

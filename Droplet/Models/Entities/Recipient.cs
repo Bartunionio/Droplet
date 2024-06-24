@@ -13,5 +13,6 @@ namespace Droplet.Models.Entities
         public BloodTypeEnum BloodType { get; set; } = default!;
 
         public ICollection<Transfusion> Transfusions { get; set; } = new List<Transfusion>();
+        public string FullName => $"{FirstName} {LastName}";
     }
 }
