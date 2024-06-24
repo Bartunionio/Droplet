@@ -1,0 +1,70 @@
+﻿@model Droplet.Models.Entities.Transfusion
+
+@{
+    ViewData["Title"] = "Create Transfusion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create Transfusion</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="IdRecipient" class="control-label">Select Recipient</label>
+        <select asp-for="IdRecipient" class="form-control" asp-items="@ViewBag.Recipients" id="RecipientDropdown">
+            <option value="">-- Select Recipient --</option>
+        </select>
+        <span asp-validation-for="IdRecipient" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IdHospital" class="control-label">Select Hospital</label>
+        <select asp-for="IdHospital" class="form-control" asp-items="@ViewBag.Hospitals">
+            <option value="">-- Select Hospital --</option>
+        </select>
+        <span asp-validation-for="IdHospital" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IdDoctor" class="control-label">Select Doctor</label>
+        <select asp-for="IdDoctor" class="form-control" asp-items="@ViewBag.Doctors">
+            <option value="">-- Select Doctor --</option>
+        </select>
+        <span asp-validation-for="IdDoctor" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BloodUsed" class="control-label">Select Blood Donation</label>
+        <select class="form-control" id="BloodOptionsDropdown" name="bloodId">
+            <option value="">-- Select Blood Donation --</option>
+        </select>
+        <span asp-validation-for="BloodUsed" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById('RecipientDropdown').addEventListener('change', function () {
+            var recipientId = this.value;
+            if (recipientId) {
+                fetch('/ManagerActions/Transfusion/GetEligibleBlood?recipientId=' + recipientId)
+                    .then(response => response.json())
+                    .then(data => {
+                        var bloodOptionsDropdown = document.getElementById('BloodOptionsDropdown');
+                        bloodOptionsDropdown.innerHTML = '<option value="">-- Select Blood Donation --</option>';
+                        if (data.success) {
+                            data.data.forEach(blood => {
+                                var option = document.createElement('option');
+                                option.value = blood.Id;
+                                option.text = blood.Description;
+                                bloodOptionsDropdown.add(option);
+                            });
+                        }
+                    });
+            } else {
+                document.getElementById('BloodOptionsDropdown').innerHTML = '<option value="">-- Select Blood Donation --</option>';
+            }
+        });
+    </script>
+}
