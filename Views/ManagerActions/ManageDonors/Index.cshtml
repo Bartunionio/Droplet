@@ -1,0 +1,47 @@
+﻿@model List<Droplet.Models.Entities.Donor>
+
+@{
+    ViewData["Title"] = "Donors List";
+}
+
+<h2>Donors Information</h2>
+
+<div class="mb-3">
+    <a asp-action="Add" class="btn btn-primary">Add New Donor</a>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>PESEL</th>
+                <th>Blood Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var donor in Model)
+            {
+                <tr>
+                    <td>@donor.Id</td>
+                    <td>@donor.FirstName</td>
+                    <td>@donor.LastName</td>
+                    <td>@donor.PESEL</td>
+                    <td>@Droplet.Helpers.EnumHelper.GetEnumDescription(donor.BloodType)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@donor.Id" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@donor.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No donors found.</p>
+}
