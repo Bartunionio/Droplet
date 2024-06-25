@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-
-namespace Droplet.Models
+﻿namespace Droplet.Models
 {
     public class UserViewModel
     {
@@ -11,7 +9,5 @@ namespace Droplet.Models
         public bool? EmailConfirmed { get; set; }
         public bool? TwoFactorEnabled { get; set; }
         public string? PhoneNumber { get; set; }
-
-        public List<SelectListItem> Roles { get; set; }
     }
 }

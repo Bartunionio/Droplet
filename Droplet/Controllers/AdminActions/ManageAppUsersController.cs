@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
@@ -97,20 +96,15 @@ namespace Droplet.Controllers
                 return NotFound();
             }
 
-            var roles = new List<SelectListItem>
-    {
-            new SelectListItem { Value = "Admin", Text = "Admin" },
-            new SelectListItem { Value = "Manager", Text = "Manager" },
-            new SelectListItem { Value = "User", Text = "User" }
-    };
+            var roles = await _userManager.GetRolesAsync(user);
+            var currentRole = roles.FirstOrDefault();
 
             var userViewModel = new UserViewModel
             {
                 Id = user.Id,
                 Username = user.UserName,
                 Email = user.Email,
-                Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? "No role assigned",
-                Roles = roles
+                Role = currentRole ?? "No role assigned",
             };
 
             return View("~/Views/AdminActions/ManageAppUsers/Edit.cshtml", userViewModel);

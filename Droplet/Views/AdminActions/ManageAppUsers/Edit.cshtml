@@ -5,8 +5,7 @@
 @model UserViewModel
 
 @{
-    ViewData["Title"] = "Edit user";
-    var currentUser = UserManager.GetUserAsync(User).Result;
+    ViewData["Title"] = "Edit User";
 }
 
 <h1>Edit User Role</h1>
@@ -38,16 +37,12 @@
     <form asp-action="Edit" asp-route-id="@Model.Username" method="post">
         <div class="form-group">
             <label for="role">Select New Role:</label>
-            @if (Model.Username == currentUser.UserName)
-            {
-                <select class="form-control" id="role" asp-for="Role" asp-items="Model.Roles" disabled></select>
-            }
-            else
-            {
-                <select class="form-control" id="role" asp-for="Role" asp-items="Model.Roles"></select>
-            }
+            <select class="form-control" id="role" asp-for="Role">
+                <option>Admin</option>
+                <option>Manager</option>
+                <option>User</option>
+            </select>
         </div>
-        <br />
         <input type="hidden" asp-for="Username" />
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a asp-action="Index" class="btn btn-secondary">Back to List</a>
