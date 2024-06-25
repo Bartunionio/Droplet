@@ -223,6 +223,8 @@ namespace Droplet.Controllers.AdminActions
             }
 
             var doctor = await _context.Doctors
+                .Include(d => d.Hospitals)
+                .Include(d => d.Transfusions)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (doctor == null)
             {
@@ -244,6 +246,11 @@ namespace Droplet.Controllers.AdminActions
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (await _context.Transfusions.FirstOrDefaultAsync(t => t.IdDoctor == id) != null)
+            {
+                return RedirectToAction(nameof(Delete));
+            }
+
             var doctor = await _context.Doctors.FindAsync(id);
             if (doctor != null)
             {

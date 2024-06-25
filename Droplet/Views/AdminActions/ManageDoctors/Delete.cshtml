@@ -10,6 +10,14 @@
 <div>
     <h4>Doctor</h4>
     <hr />
+    @if (Model.Doctor.Transfusions.Any())
+    {
+        <div class="alert alert-dismissible alert-primary">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>Oh snap!</strong> You can't delete this doctor. His data is used in transfusion report!
+            <a asp-route="transfusionlist">Delete or modify here first.</a>
+        </div>
+    }
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Doctor.Id)
@@ -62,7 +70,14 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Doctor.Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" />
+        @if (Model.Doctor.Transfusions.Any())
+        {
+            <input value="Delete" class="btn btn-danger disabled"/>
+        }
+        else
+        {
+            <input value="Delete" class="btn btn-danger" />
+        }
         <a asp-action="Index" class="btn btn-secondary">Back to List</a>
     </form>
 </div>
