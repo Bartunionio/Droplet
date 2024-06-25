@@ -1,5 +1,6 @@
 ﻿using Droplet.Data.Enum;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Droplet.Models.Entities
 {
@@ -13,6 +14,7 @@ namespace Droplet.Models.Entities
         public BloodTypeEnum BloodType { get; set; } = default!;
 
         public ICollection<Transfusion> Transfusions { get; set; } = new List<Transfusion>();
+        [NotMapped]
         public string FullName => $"{FirstName} {LastName}";
     }
 }

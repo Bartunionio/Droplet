@@ -6,9 +6,11 @@ using Droplet.Helpers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Droplet.Data.Enum;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Droplet.Controllers.MenagersActions
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class DonorController : Controller
     {
         private readonly ApplicationDbContext _context;

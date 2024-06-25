@@ -1,0 +1,60 @@
+﻿@model Droplet.Models.HospitalViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Hospital</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Hospital.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Hospital.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Hospital.Address)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Hospital.Address)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Hospital.Street)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Hospital.Street)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Hospital.PostalCode)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Hospital.PostalCode)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Personnel)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Personnel.Any())
+            {
+                <ul>
+                    @foreach (var doc in Model.Personnel)
+                    {
+                        <li>@doc.FullName</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No one works here!</p>
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Hospital.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

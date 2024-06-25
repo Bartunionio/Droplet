@@ -15,6 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Views\AdminActions\ManageHospitals\Create.cshtml" />
+    <Content Include="Views\AdminActions\ManageHospitals\Delete.cshtml" />
+    <Content Include="Views\AdminActions\ManageHospitals\Details.cshtml" />
+    <Content Include="Views\AdminActions\ManageHospitals\Edit.cshtml" />
+    <Content Include="Views\AdminActions\ManageHospitals\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <!--PackageReference Include="Identity.EntityFrameworkCore" Version="1.2.7" /-->
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />

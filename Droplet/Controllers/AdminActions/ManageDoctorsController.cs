@@ -10,9 +10,11 @@ using Droplet.Models.Entities;
 using Droplet.Helpers;
 using System.Drawing;
 using Droplet.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Droplet.Controllers.AdminActions
 {
+    [Authorize(Roles = "Admin")]
     public class ManageDoctorsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -38,6 +40,7 @@ namespace Droplet.Controllers.AdminActions
             }
 
             var doctor = await _context.Doctors
+                .Include(d => d.Hospitals)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (doctor == null)
             {

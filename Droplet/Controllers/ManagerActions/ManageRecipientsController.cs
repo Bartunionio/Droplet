@@ -2,6 +2,7 @@
 using Droplet.Data.Enum;
 using Droplet.Helpers;
 using Droplet.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Droplet.Controllers.ManagersActions
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class RecipientController : Controller
     {
         private readonly ApplicationDbContext _context;

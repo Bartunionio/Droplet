@@ -1,6 +1,7 @@
 ﻿using Droplet.Data;
 using Droplet.Models.Entities;
 using Droplet.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Droplet.Controllers.ManagerActions
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class DonationController : Controller
     {
         private readonly ApplicationDbContext _context;

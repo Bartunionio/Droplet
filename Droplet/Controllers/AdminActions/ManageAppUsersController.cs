@@ -1,5 +1,6 @@
 ﻿using Droplet.Data;
 using Droplet.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using System.Data;
 
 namespace Droplet.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ManageAppUsersController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
