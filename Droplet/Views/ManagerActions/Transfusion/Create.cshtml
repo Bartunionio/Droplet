@@ -1,70 +1,58 @@
-﻿@model Droplet.Models.Entities.Transfusion
+﻿@model Droplet.Models.ViewModels.TransfusionCreateViewModel
 
 @{
     ViewData["Title"] = "Create Transfusion";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create Transfusion</h1>
+<h2>Create Transfusion</h2>
 
 <form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <!-- Recipient Selection -->
     <div class="form-group">
-        <label asp-for="IdRecipient" class="control-label">Select Recipient</label>
-        <select asp-for="IdRecipient" class="form-control" asp-items="@ViewBag.Recipients" id="RecipientDropdown">
-            <option value="">-- Select Recipient --</option>
-        </select>
-        <span asp-validation-for="IdRecipient" class="text-danger"></span>
+        <label asp-for="SelectedRecipientId" class="control-label">Select Recipient</label>
+        <select asp-for="SelectedRecipientId" class="form-control" asp-items="ViewBag.Recipients"></select>
+        <span asp-validation-for="SelectedRecipientId" class="text-danger"></span>
     </div>
 
+    <!-- Hospital Selection -->
     <div class="form-group">
-        <label asp-for="IdHospital" class="control-label">Select Hospital</label>
-        <select asp-for="IdHospital" class="form-control" asp-items="@ViewBag.Hospitals">
-            <option value="">-- Select Hospital --</option>
-        </select>
-        <span asp-validation-for="IdHospital" class="text-danger"></span>
+        <label asp-for="SelectedHospitalId" class="control-label">Select Hospital</label>
+        <select asp-for="SelectedHospitalId" class="form-control" asp-items="ViewBag.Hospitals" onchange="loadDoctors(this.value)"></select>
+        <span asp-validation-for="SelectedHospitalId" class="text-danger"></span>
     </div>
 
+    <!-- Doctor Selection -->
     <div class="form-group">
-        <label asp-for="IdDoctor" class="control-label">Select Doctor</label>
-        <select asp-for="IdDoctor" class="form-control" asp-items="@ViewBag.Doctors">
-            <option value="">-- Select Doctor --</option>
-        </select>
-        <span asp-validation-for="IdDoctor" class="text-danger"></span>
+        <label asp-for="SelectedDoctorId" class="control-label">Select Doctor</label>
+        <select asp-for="SelectedDoctorId" class="form-control" asp-items="ViewBag.Doctors"></select>
+        <span asp-validation-for="SelectedDoctorId" class="text-danger"></span>
     </div>
 
+    <!-- Blood Quantity -->
     <div class="form-group">
-        <label asp-for="BloodUsed" class="control-label">Select Blood Donation</label>
-        <select class="form-control" id="BloodOptionsDropdown" name="bloodId">
-            <option value="">-- Select Blood Donation --</option>
-        </select>
-        <span asp-validation-for="BloodUsed" class="text-danger"></span>
+        <label asp-for="BloodQuantity" class="control-label">Select Quantity</label>
+        <input asp-for="BloodQuantity" class="form-control" type="number" min="1" value="1" />
+        <span asp-validation-for="BloodQuantity" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
-        document.getElementById('RecipientDropdown').addEventListener('change', function () {
-            var recipientId = this.value;
-            if (recipientId) {
-                fetch('/ManagerActions/Transfusion/GetEligibleBlood?recipientId=' + recipientId)
-                    .then(response => response.json())
-                    .then(data => {
-                        var bloodOptionsDropdown = document.getElementById('BloodOptionsDropdown');
-                        bloodOptionsDropdown.innerHTML = '<option value="">-- Select Blood Donation --</option>';
-                        if (data.success) {
-                            data.data.forEach(blood => {
-                                var option = document.createElement('option');
-                                option.value = blood.Id;
-                                option.text = blood.Description;
-                                bloodOptionsDropdown.add(option);
-                            });
-                        }
-                    });
-            } else {
-                document.getElementById('BloodOptionsDropdown').innerHTML = '<option value="">-- Select Blood Donation --</option>';
-            }
-        });
+        function loadDoctors(hospitalId) {
+            $.getJSON('/ManagerActions/Transfusion/GetDoctorsByHospital', { hospitalId: hospitalId }, function (data) {
+                var options = '<option value="">Select a Doctor</option>';
+                $.each(data.data, function (i, doctor) {
+                    options += '<option value="' + doctor.value + '">' + doctor.text + '</option>';
+                });
+                $('select[name="SelectedDoctorId"]').html(options);
+            });
+        }
     </script>
 }

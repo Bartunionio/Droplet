@@ -1,7 +1,6 @@
 using Droplet.Data;
 using Droplet.Models;
 using Droplet.Models.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -35,7 +34,6 @@ namespace Droplet.Controllers
 
         // GET: Blood Status
         [Route("Views/Home/Blood_status.cshtml", Name = "blood_status")]
-        [Authorize(Roles = "Admin,Manager,User")]
         public async Task<IActionResult> BloodStatus()
         {
             var currentDate = DateOnly.FromDateTime(DateTime.Now);
@@ -53,6 +51,20 @@ namespace Droplet.Controllers
                 .ToListAsync();
 
             return View("Views/Home/Blood_status.cshtml", bloodStatus);
+        }
+
+
+        // GET: Transfusion/Index
+        [Route("Views/Home/Transfusion_view.cshtml", Name = "transfusion")]
+        public async Task<IActionResult> Transfusion()
+        {
+            var transfusions = await _context.Transfusions
+                .Include(t => t.Recipient)
+                .Include(t => t.Hospital)
+                .Include(t => t.Doctor)
+                .ToListAsync();
+
+            return View("Views/Home/Transfusion_view.cshtml", transfusions);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
