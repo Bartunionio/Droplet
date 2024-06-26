@@ -28,7 +28,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="@(item.Username == currentUser.UserName ? "table-active" : "")">
                 <td>
                     @item.Username
                 </td>
@@ -47,11 +47,11 @@
                     }
                     else
                     {
-                    <a asp-route="appuseredit" asp-route-username="@item.Username" class="btn btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-username="@item.Username" class="btn btn-secondary">Details</a>
-                    <a asp-route="appuserdelete" asp-route-username="@item.Username" class="btn btn-danger">Delete</a>
+                        <a asp-route="appuseredit" asp-route-username="@item.Username" class="btn btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-username="@item.Username" class="btn btn-secondary">Details</a>
+                        <a asp-route="appuserdelete" asp-route-username="@item.Username" class="btn btn-danger">Delete</a>
                     }
-                    
+
                 </td>
             </tr>
         }

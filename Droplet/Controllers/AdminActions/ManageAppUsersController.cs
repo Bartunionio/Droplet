@@ -23,7 +23,7 @@ namespace Droplet.Controllers
         }
 
         // GET: ManageAppUsersController
-        [Route("/AdminActions/ManageAppUsers", Name ="appuserlist")]
+        [Route("/AdminActions/ManageAppUsers", Name = "appuserlist")]
         public async Task<IActionResult> Index()
         {
             var usersWithRoles = new List<UserViewModel>();
@@ -44,7 +44,7 @@ namespace Droplet.Controllers
                 });
             }
 
-            usersWithRoles = usersWithRoles.OrderBy(u => u.Role).ThenBy(u => u.Id).ToList();
+            usersWithRoles = usersWithRoles.OrderBy(u => u.Role).ThenBy(u => u.Username).ToList();
 
             return View("~/Views/AdminActions/ManageAppUsers/Index.cshtml", usersWithRoles);
         }
@@ -96,13 +96,18 @@ namespace Droplet.Controllers
             {
                 return NotFound();
             }
+            // Forbid editing current user
+            if (user == _userManager.GetUserAsync(User).Result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             var roles = new List<SelectListItem>
-    {
-            new SelectListItem { Value = "Admin", Text = "Admin" },
-            new SelectListItem { Value = "Manager", Text = "Manager" },
-            new SelectListItem { Value = "User", Text = "User" }
-    };
+            {
+                new SelectListItem { Value = "Admin", Text = "Admin" },
+                new SelectListItem { Value = "Manager", Text = "Manager" },
+                new SelectListItem { Value = "User", Text = "User" }
+            };
 
             var userViewModel = new UserViewModel
             {
@@ -131,6 +136,11 @@ namespace Droplet.Controllers
             if (user == null)
             {
                 return NotFound();
+            }
+            // Forbid editing current user
+            if (user == _userManager.GetUserAsync(User).Result)
+            {
+                return RedirectToAction(nameof(Index));
             }
 
             var roles = await _userManager.GetRolesAsync(user);
