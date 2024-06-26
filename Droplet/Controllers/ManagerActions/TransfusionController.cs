@@ -1,7 +1,5 @@
 ﻿using Droplet.Data;
-using Droplet.Models;
 using Droplet.Models.Entities;
-using Droplet.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -28,6 +26,7 @@ namespace Droplet.Controllers.ManagerActions
         [Route("/ManagerActions/Transfusion/Create", Name = "transfusion_create")]
         public async Task<IActionResult> Create()
         {
+            // Get recipients
             var recipients = await _context.Recipients
                 .Select(r => new SelectListItem
                 {
@@ -36,120 +35,76 @@ namespace Droplet.Controllers.ManagerActions
                 })
                 .ToListAsync();
 
+            // Get hospitals
             var hospitals = await _context.Hospitals
-                .Include(h => h.Doctors)
-                .Select(h => new HospitalViewModel
+                .Select(h => new SelectListItem
                 {
-                    Hospital = h,
-                    Personnel = h.Doctors.ToList()
+                    Value = h.Id.ToString(),
+                    Text = h.Name
                 })
                 .ToListAsync();
 
+            // Get doctors (Implement logic to fetch doctors associated with hospitals)
+            var doctors = new List<SelectListItem>(); // Implement logic based on your schema
+
             ViewBag.Recipients = new SelectList(recipients, "Value", "Text");
-            ViewBag.Hospitals = new SelectList(hospitals, "Hospital.Id", "Hospital.Name");
+            ViewBag.Hospitals = new SelectList(hospitals, "Value", "Text");
+            ViewBag.Doctors = new SelectList(doctors, "Value", "Text");
 
-            // Initially, no doctors are selected, so pass an empty list
-            ViewBag.Doctors = new SelectList(new List<SelectListItem>(), "Value", "Text");
+            return View("~/Views/ManagerActions/Transfusion/Create.cshtml", new Transfusion());
+        }
 
-            return View("~/Views/ManagerActions/Transfusion/Create.cshtml", new TransfusionCreateViewModel());
+        // GET: Transfusion/GetEligibleBlood
+        [HttpGet]
+        [Route("/ManagerActions/Transfusion/GetEligibleBlood")]
+        public async Task<IActionResult> GetEligibleBlood(int recipientId)
+        {
+            var recipient = await _context.Recipients.FindAsync(recipientId);
+            if (recipient == null)
+            {
+                return Json(new { success = false, message = "Recipient not found" });
+            }
+
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+            var cutOffDate = currentDate.AddDays(-35);
+
+            var eligibleBlood = await _context.Donations
+                .Where(d => d.IdTransfusion == null && d.Date >= cutOffDate && d.Donor.BloodType == recipient.BloodType)
+                .Select(d => new
+                {
+                    Id = d.Id,
+                    Description = $"{d.Donor.FullName} - Blood Type: {d.Donor.BloodType}"
+                })
+                .ToListAsync();
+
+            return Json(new { success = true, data = eligibleBlood });
         }
 
         // POST: Transfusion/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("/ManagerActions/Transfusion/Create", Name = "transfusion_create")]
-        public async Task<IActionResult> Create(TransfusionCreateViewModel model)
+        public async Task<IActionResult> Create(Transfusion model, int bloodId)
         {
             if (ModelState.IsValid)
             {
-                var recipient = await _context.Recipients.FindAsync(model.SelectedRecipientId);
-                var hospital = await _context.Hospitals.FindAsync(model.SelectedHospitalId);
-                var doctor = await _context.Doctors.FindAsync(model.SelectedDoctorId);
+                // Find the selected blood donation
+                var bloodDonation = await _context.Donations.FindAsync(bloodId);
 
-                if (recipient == null || hospital == null || doctor == null)
+                if (bloodDonation != null)
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid recipient, hospital, or doctor selection.");
-                    await LoadCreateForm(model);
-                    return View("~/Views/ManagerActions/Transfusion/Create.cshtml", model);
-                }
+                    model.BloodUsed = new List<Bank> { bloodDonation };
+                    _context.Transfusions.Add(model);
 
-                // Calculate the total quantity of eligible blood donations
-                var totalBloodAvailable = await _context.Donations
-                    .Where(d => d.IdTransfusion == null && d.Donor.BloodType == recipient.BloodType)
-                    .CountAsync();
+                    // Update the blood donation with the transfusion ID
+                    bloodDonation.IdTransfusion = model.Id;
 
-                // Check if there are enough blood donations available
-                if (totalBloodAvailable < model.BloodQuantity)
-                {
-                    ModelState.AddModelError(string.Empty, $"There are not enough eligible blood donations available for transfusion. Available: {totalBloodAvailable}, Required: {model.BloodQuantity}");
-                    await LoadCreateForm(model);
-                    return View("~/Views/ManagerActions/Transfusion/Create.cshtml", model);
-                }
-
-                // Create the transfusion
-                var transfusion = new Transfusion
-                {
-                    Date = DateTime.Now,
-                    IdRecipient = model.SelectedRecipientId,
-                    IdHospital = model.SelectedHospitalId,
-                    IdDoctor = model.SelectedDoctorId,
-                };
-
-                _context.Transfusions.Add(transfusion);
-                await _context.SaveChangesAsync();
-
-                // Update donations with IdTransfusion
-                var bloodDonations = await _context.Donations
-                    .Include(d => d.Donor)
-                    .Where(d => d.IdTransfusion == null && d.Donor.BloodType == recipient.BloodType)
-                    .OrderBy(d => d.Date) // Order by date to get the oldest donations first
-                    .Take(model.BloodQuantity) // Take the specified number of oldest donations
-                    .ToListAsync();
-
-                if (bloodDonations.Count < model.BloodQuantity)
-                {
-                    // Rollback the transfusion creation if there aren't enough donations
-                    ModelState.AddModelError(string.Empty, $"There are not enough eligible blood donations available for transfusion. Available: {bloodDonations.Count}, Required: {model.BloodQuantity}");
-                    _context.Transfusions.Remove(transfusion);
                     await _context.SaveChangesAsync();
-                    await LoadCreateForm(model);
-                    return View("~/Views/ManagerActions/Transfusion/Create.cshtml", model);
+                    return RedirectToAction(nameof(Index), "Home"); // Redirect to Home or Blood_status view
                 }
-
-                foreach (var donation in bloodDonations)
-                {
-                    donation.IdTransfusion = transfusion.Id;
-                }
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index), "Home");
             }
 
-            await LoadCreateForm(model);
-            return View("~/Views/ManagerActions/Transfusion/Create.cshtml", model);
-        }
-
-        // GET: Transfusion/GetDoctorsByHospital
-        [HttpGet]
-        [Route("/ManagerActions/Transfusion/GetDoctorsByHospital")]
-        public async Task<IActionResult> GetDoctorsByHospital(int hospitalId)
-        {
-            var doctors = await _context.Doctors
-                .Where(d => d.Hospitals.Any(h => h.Id == hospitalId))
-                .Select(d => new SelectListItem
-                {
-                    Value = d.Id.ToString(),
-                    Text = d.FullName
-                })
-                .ToListAsync();
-
-            return Json(new { success = true, data = doctors });
-        }
-
-        // Helper method to load create form with updated data
-        private async Task LoadCreateForm(TransfusionCreateViewModel model)
-        {
+            // If model state is not valid or blood donation was not found, reload the page with options
             var recipients = await _context.Recipients
                 .Select(r => new SelectListItem
                 {
@@ -159,35 +114,21 @@ namespace Droplet.Controllers.ManagerActions
                 .ToListAsync();
 
             var hospitals = await _context.Hospitals
-                .Include(h => h.Doctors)
-                .Select(h => new HospitalViewModel
+                .Select(h => new SelectListItem
                 {
-                    Hospital = h,
-                    Personnel = h.Doctors.ToList()
+                    Value = h.Id.ToString(),
+                    Text = h.Name
                 })
                 .ToListAsync();
 
+            var doctors = new List<SelectListItem>(); // You need to implement this logic based on your schema
+
             ViewBag.Recipients = new SelectList(recipients, "Value", "Text");
-            ViewBag.Hospitals = new SelectList(hospitals, "Hospital.Id", "Hospital.Name");
+            ViewBag.Hospitals = new SelectList(hospitals, "Value", "Text");
+            ViewBag.Doctors = new SelectList(doctors, "Value", "Text");
+            ViewBag.BloodOptions = new SelectList(new List<object>()); // Empty list for failed scenario
 
-            // If model already has SelectedHospitalId, populate doctors for that hospital
-            if (model.SelectedHospitalId != null)
-            {
-                var doctors = await _context.Doctors
-                    .Where(d => d.Hospitals.Any(h => h.Id == model.SelectedHospitalId))
-                    .Select(d => new SelectListItem
-                    {
-                        Value = d.Id.ToString(),
-                        Text = d.FullName
-                    })
-                    .ToListAsync();
-
-                ViewBag.Doctors = new SelectList(doctors, "Value", "Text", model.SelectedDoctorId);
-            }
-            else
-            {
-                ViewBag.Doctors = new SelectList(new List<SelectListItem>(), "Value", "Text");
-            }
+            return View("~/Views/ManagerActions/Transfusion/Create.cshtml", model);
         }
     }
 }

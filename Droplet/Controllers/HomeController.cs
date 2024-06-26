@@ -53,21 +53,7 @@ namespace Droplet.Controllers
             return View("Views/Home/Blood_status.cshtml", bloodStatus);
         }
 
-
-        // GET: Transfusion/Index
-        [Route("Views/Home/Transfusion_view.cshtml", Name = "transfusion")]
-        public async Task<IActionResult> Transfusion()
-        {
-            var transfusions = await _context.Transfusions
-                .Include(t => t.Recipient)
-                .Include(t => t.Hospital)
-                .Include(t => t.Doctor)
-                .ToListAsync();
-
-            return View("Views/Home/Transfusion_view.cshtml",transfusions);
-        }
-
-            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

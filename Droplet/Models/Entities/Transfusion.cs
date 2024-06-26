@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Droplet.Models.Entities
@@ -8,21 +7,19 @@ namespace Droplet.Models.Entities
     {
         [Key]
         public int Id { get; set; }
+        public DateOnly Date { get; set; }
 
         [ForeignKey("Recipient")]
-        public int IdRecipient { get; set; }
-        public Recipient Recipient { get; set; }
+        public int IdRecipient { get; set; } = default!;
+        public Recipient Recipient { get; set; } = default!;
 
         [ForeignKey("Hospital")]
-        public int IdHospital { get; set; }
-        public Hospital Hospital { get; set; }
+        public int IdHospital { get; set; } = default!;
+        public Hospital Hospital { get; set; } = default!;
 
         [ForeignKey("Doctor")]
-        public int IdDoctor { get; set; }
-        public Doctor Doctor { get; set; }
-
-        public DateTime Date { get; set; }
-
+        public int IdDoctor { get; set; } = default!;
+        public Doctor Doctor { get; set; } = default!;
 
         public ICollection<Bank> BloodUsed { get; set; } = new List<Bank>();
     }
