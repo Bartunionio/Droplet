@@ -43,7 +43,7 @@ namespace Droplet.Controllers.ManagerActions
             List<SelectListItem> donorList = donors.Select(d => new SelectListItem
             {
                 Value = d.Id.ToString(),
-                Text = $"{d.FullName} - PESEL: {d.PESEL}"
+                Text = $"{d.FullName}  -  PESEL: {d.PESEL}"
             }).ToList();
 
             ViewBag.Donors = new SelectList(donorList, "Value", "Text");

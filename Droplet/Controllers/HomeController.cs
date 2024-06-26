@@ -1,6 +1,7 @@
 using Droplet.Data;
 using Droplet.Models;
 using Droplet.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -34,6 +35,7 @@ namespace Droplet.Controllers
 
         // GET: Blood Status
         [Route("Views/Home/Blood_status.cshtml", Name = "blood_status")]
+        [Authorize(Roles = "Admin,Manager,User")]
         public async Task<IActionResult> BloodStatus()
         {
             var currentDate = DateOnly.FromDateTime(DateTime.Now);

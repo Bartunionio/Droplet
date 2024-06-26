@@ -19,7 +19,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.BloodType</td>
+                    <td>@Droplet.Helpers.EnumHelper.GetEnumDescription(item.BloodType)</td>
                     <td>@item.Quantity</td>
                 </tr>
             }

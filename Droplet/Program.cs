@@ -71,7 +71,6 @@ public class Program
             string adminPasswd = "zaq1@WSX";
             string adminLogin = "admin";
 
-            //if(await userManager.FindByEmailAsync(adminEmail) == null)
             if(await userManager.FindByLoginAsync(adminLogin, "Droplet") == null)
             {
                 var user = new IdentityUser();
@@ -82,6 +81,38 @@ public class Program
                 await userManager.CreateAsync(user, adminPasswd);
 
                 await userManager.AddToRoleAsync(user, "Admin");
+            }
+
+            string managerEmail = "manager@droplet.com";
+            string managerPasswd = "zaq1@WSX";
+            string managerLogin = "manager";
+
+            if (await userManager.FindByLoginAsync(managerLogin, "Droplet") == null)
+            {
+                var user = new IdentityUser();
+                user.Email = managerEmail;
+                user.UserName = managerLogin;
+                user.EmailConfirmed = true;
+
+                await userManager.CreateAsync(user, managerPasswd);
+
+                await userManager.AddToRoleAsync(user, "Manager");
+            }
+
+            string userEmail = "admin@droplet.com";
+            string userPasswd = "zaq1@WSX";
+            string userLogin = "admin";
+
+            if (await userManager.FindByLoginAsync(userLogin, "Droplet") == null)
+            {
+                var user = new IdentityUser();
+                user.Email = userEmail;
+                user.UserName = userLogin;
+                user.EmailConfirmed = true;
+
+                await userManager.CreateAsync(user, userPasswd);
+
+                await userManager.AddToRoleAsync(user, "User");
             }
         }
 
