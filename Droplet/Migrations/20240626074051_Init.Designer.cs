@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Droplet.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240623201415_Init")]
+    [Migration("20240626074051_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -89,6 +89,64 @@ namespace Droplet.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Doctors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstName = "John",
+                            LastName = "Doe",
+                            PESEL = "90060184361"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FirstName = "Jane",
+                            LastName = "Doe",
+                            PESEL = "94110926169"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            FirstName = "Alice",
+                            LastName = "Smith",
+                            PESEL = "99061937114"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            FirstName = "Bob",
+                            LastName = "Johnson",
+                            PESEL = "56051657197"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            FirstName = "Charlie",
+                            LastName = "Brown",
+                            PESEL = "84101422862"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            FirstName = "Dave",
+                            LastName = "Wilson",
+                            PESEL = "96110262292"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            FirstName = "Eve",
+                            LastName = "Davis",
+                            PESEL = "62030165469"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            FirstName = "Frank",
+                            LastName = "Miller",
+                            PESEL = "72061521868"
+                        });
                 });
 
             modelBuilder.Entity("Droplet.Models.Entities.Donor", b =>
@@ -117,6 +175,112 @@ namespace Droplet.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Donors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BloodType = 3,
+                            FirstName = "Frank",
+                            LastName = "Miller",
+                            PESEL = "78011762657"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BloodType = 5,
+                            FirstName = "Grace",
+                            LastName = "Adams",
+                            PESEL = "58031151389"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BloodType = 7,
+                            FirstName = "Hank",
+                            LastName = "Baker",
+                            PESEL = "63082969285"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BloodType = 2,
+                            FirstName = "Ivy",
+                            LastName = "Clark",
+                            PESEL = "71021617898"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BloodType = 1,
+                            FirstName = "Jack",
+                            LastName = "Evans",
+                            PESEL = "61020226252"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BloodType = 0,
+                            FirstName = "Kate",
+                            LastName = "Fisher",
+                            PESEL = "60042994741"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            BloodType = 6,
+                            FirstName = "Leo",
+                            LastName = "Garcia",
+                            PESEL = "64082237664"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            BloodType = 4,
+                            FirstName = "Mia",
+                            LastName = "Harris",
+                            PESEL = "70070919982"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            BloodType = 2,
+                            FirstName = "Nina",
+                            LastName = "Ivanov",
+                            PESEL = "83100453712"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            BloodType = 0,
+                            FirstName = "Oscar",
+                            LastName = "Jones",
+                            PESEL = "70011425996"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            BloodType = 5,
+                            FirstName = "Paul",
+                            LastName = "Kim",
+                            PESEL = "90071459573"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            BloodType = 7,
+                            FirstName = "Quinn",
+                            LastName = "Lopez",
+                            PESEL = "80082622961"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            BloodType = 1,
+                            FirstName = "Rose",
+                            LastName = "Martinez",
+                            PESEL = "96110619575"
+                        });
                 });
 
             modelBuilder.Entity("Droplet.Models.Entities.Hospital", b =>
@@ -224,6 +388,64 @@ namespace Droplet.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Recipients");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BloodType = 7,
+                            FirstName = "Sam",
+                            LastName = "Nelson",
+                            PESEL = "73040165268"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BloodType = 2,
+                            FirstName = "Tina",
+                            LastName = "O'Neill",
+                            PESEL = "74071689484"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BloodType = 1,
+                            FirstName = "Uma",
+                            LastName = "Perez",
+                            PESEL = "90102796295"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BloodType = 0,
+                            FirstName = "Victor",
+                            LastName = "Quinn",
+                            PESEL = "65110111691"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BloodType = 6,
+                            FirstName = "Wendy",
+                            LastName = "Reed",
+                            PESEL = "71102928565"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BloodType = 4,
+                            FirstName = "Xander",
+                            LastName = "Sanchez",
+                            PESEL = "93100227217"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            BloodType = 2,
+                            FirstName = "Yara",
+                            LastName = "Thomas",
+                            PESEL = "97120413337"
+                        });
                 });
 
             modelBuilder.Entity("Droplet.Models.Entities.Transfusion", b =>
